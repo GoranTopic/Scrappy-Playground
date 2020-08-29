@@ -7,8 +7,17 @@
 
 import scrapy
 
-
-class TutorialItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+class Word(scrapy.Item):
+    ''' Word Data Item for saving the word definition from merriamwebster'''
+    word = scrapy.Field()
+    pronunciations = scrapy.Field()
+    syllables = scrapy.Field()
+    definitions = scrapy.Field()
+    synonyms = scrapy.Field()
+    antonyms = scrapy.Field()
+    synonym_discussion = scrapy.Field()
+    did_you_know = scrapy.Field()
+    examples = scrapy.Field()
+    etymology = scrapy.Field()
+                        
+          
