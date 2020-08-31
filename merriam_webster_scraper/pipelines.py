@@ -18,7 +18,7 @@ class MerriamWebsterScraperPipeline:
         self.file.close()
 
     def process_item(self, item, spider):
-        line = json.dumps(ItemAdapter(item).asdict())
+        line = json.dumps(ItemAdapter(item).asdict(), indent=4, sort_keys=True)
         self.file.write(line)
         return item
 
