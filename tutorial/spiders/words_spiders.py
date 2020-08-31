@@ -40,9 +40,10 @@ class WordSpider(scrapy.Spider):
         '''Pasre the web page with a word'''
         #create a new word item
         word = Word()
-
         #get word
         word["word"] = response.xpath('//h1[@class="hword"]/text()').get()
+        #save url
+        word["url"] = response.url
         #get pronunciation
         word["pronunciations"] = response.xpath('//span[@class="pr"]/text()').getall()
         #get syllables
@@ -57,15 +58,17 @@ class WordSpider(scrapy.Spider):
         word["examples"] = [ self.clean_string(span.xpath('descendant::text()').getall()) for span in response.xpath('//div[@id="examples-anchor"]/div[@class="in-sentences"]/span')]
         #get etymology
         word["etymology"] = self.clean_string(response.xpath('//div[@id="etymology-anchor"]/descendant::*/text()').getall())
+        # get notes if existant
+        word["notes"] = self.clean_string(response.xpath('//div[starts-with(@id, "note-")]/descendant::*/text()').getall())
         #get definition
         word["definitions"] = {}
 
         #empty list to store definitions
         definitions = []
         #get all the syntaxes
-        syntaxes = response.xpath('//span[@id="anchor-seporator"]/preceding::span[@class="fl"]/*/text()').getall()
-        #get dictionary entries:
-        entries = response.xpath('//span[@id="anchor-seporator"]/preceding::div[starts-with(@id, "dictionary-entry-")]')
+        syntaxes = response.xpath('//span[@class="fl"]//text()').getall()
+        #get dictionary entriese
+        entries = response.xpath('//div[starts-with(@id, "dictionary-entry-")]')
         # for every dictionary entry
         for entry in entries:
             #get the definition lines
@@ -76,8 +79,17 @@ class WordSpider(scrapy.Spider):
             # for every line in the entry make, get all string and concatinate into a list of lines
             definitions.append( ["".join(line.xpath('descendant::text()').getall()) for line in entry_lines] )
         #Combine the definition and the syntax back together 
-        for i in range(0, len(syntaxes)):
-            word["definitions"][syntaxes[i]] = [ self.clean_string(definition) for definition in definitions[i] ]
+        #For every entry found combine with the matching index of syntax found
+        if len(entries) > 0  and  len(syntaxes) == 0:
+            for i in range(0, len(entries)):
+                word["definitions"] = [ self.clean_string(definition) for definition in definitions[i] ]
+        if len(entries) >=  len(syntaxes):
+            for i in range(0, len(syntaxes)):
+                word["definitions"][syntaxes[i]] = [ self.clean_string(definition) for definition in definitions[i] ]
+        elif len(entries) <  len(syntaxes):
+            for i in range(0, len(entries)):
+                word["definitions"][syntaxes[i]] = [ self.clean_string(definition) for definition in definitions[i] ]
+            word
         yield word
      
    
