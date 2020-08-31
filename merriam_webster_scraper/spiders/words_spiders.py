@@ -1,5 +1,5 @@
 import scrapy
-from  tutorial.items import Word
+from  merriam_webster_scraper.items import Word
 
 class WordSpider(scrapy.Spider):
     name = "words"

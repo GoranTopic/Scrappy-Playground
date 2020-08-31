@@ -9,10 +9,10 @@ import sqlite3
 from itemadapter import ItemAdapter
 
 
-class TutorialPipeline:
+class MerriamWebsterScraperPipeline:
 
     def open_spider(self, spider):
-        self.file = open('words.json', 'w')
+        self.file = open('dictionary.json', 'w')
 
     def close_spider(self, spider):
         self.file.close()
