@@ -41,7 +41,7 @@ class WordSpider(scrapy.Spider):
         #create a new word item
         word = Word()
         #get word
-        word["word"] = response.xpath('//h1[@class="hword"]/text()').get()
+        word["word"] = response.xpath('//h1[@class="hword"]/descendant::text()').get()
         #save url
         word["url"] = response.url
         #get pronunciation
